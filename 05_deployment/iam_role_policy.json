@@ -1,0 +1,17 @@
+# Get account id
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
+# Create IAM role
+aws iam create-role \
+  --role-name strands-agents-lambda-bedrock-role \
+  --assume-role-policy-document file://trust-policy.json
+
+# Create IAM policy
+aws iam create-policy \
+  --policy-name strands-agents-lambda-bedrock-policy \
+  --policy-document file://bedrock-policy.json
+
+# Attach IAM policy
+aws iam attach-role-policy \
+  --role-name strands-agents-lambda-bedrock-role \
+  --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/strands-agents-lambda-bedrock-policy
